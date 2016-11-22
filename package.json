@@ -1,0 +1,26 @@
+{
+  "name": "parser-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape tests/**/*.js | tap-dot",
+    "build-grammar": "pegjs mygrammar.pegjs",
+    "build": "npm run build-grammar && npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nbarber1993/Parser-Test.git"
+  },
+  "author": "Nicholas Barber",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nbarber1993/Parser-Test/issues"
+  },
+  "homepage": "https://github.com/nbarber1993/Parser-Test#readme",
+  "devDependencies": {
+    "pegjs": "^0.10.0",
+    "tap-dot": "^1.0.5",
+    "tape": "^4.6.2"
+  }
+}
