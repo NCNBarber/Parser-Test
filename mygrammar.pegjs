@@ -5,18 +5,44 @@
 }
 
 start
-  = multiplicitive
-
-multiplicitive
-  = whitespace? left:integer whitespace? "*" whitespace? right:multiplicitive whitespace? { return left * right }
-  / additive
+  = additive
+  / multiplicative
 
 additive
-  = whitespace? left:integer whitespace? "+" whitespace? right:additive whitespace? { return left + right }
-  / integer
+  = whitespace? left:multiplicative whitespace? operator:additiveOp whitespace? right:additive whitespace? {
+    if (operator === "+") {
+      return left + right;
+    } else {
+      return left - right;
+    }
+  }
+  / primary
+
+multiplicative
+  = whitespace? left:primary whitespace? operator:multiplicativeOp whitespace? right:multiplicative whitespace? {
+    if (operator === "*") {
+      return left * right;
+    } else {
+      return left / right;
+    }
+  }
+  / primary
+
+primary
+  = integer
+  / "(" additive:additive ")" { return additive; }
+  / "(" multiplicative:multiplicative ")" { return multiplicative; }
 
 integer "integer"
   = digits:[0-9]+ { return makeInteger(digits); }
 
 whitespace
   = [ \t\n]+ { return; }
+
+additiveOp
+  = "+"
+  / "-"
+
+multiplicativeOp
+  = "*"
+  / "/"

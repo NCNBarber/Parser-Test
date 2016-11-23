@@ -3,7 +3,10 @@ var test = require('tape');
 var parser = require('../mygrammar');
 
 function testAnswer(tester, expression, expected, description) {
-    var result = parser.parse(expression);
+    var result
+    tester.doesNotThrow(function() {
+      result = parser.parse(expression);
+    });
     tester.equal(result, expected, description);
 }
 
@@ -63,7 +66,6 @@ test('handling unique whitespaces test', function (t) {
 });
 
 test('basic multiplication test', function (t) {
-  var result;
 
   testAnswer(t, '1*1', 1, 'could multiply')
   testAnswer(t, '1*2', 2, 'could multiply')
@@ -73,12 +75,66 @@ test('basic multiplication test', function (t) {
 });
 
 test('multiplication and addition test', function (t) {
-  var result;
 
   testAnswer(t, '1 * 1 + 1', 2, 'could compute')
-  testAnswer(t, '1 * 2 + 3', 5, 'could compute')
+  testAnswer(t, '2 * 2 + 3', 7, 'could compute')
   testAnswer(t, '3 * 4 + 2', 14, 'could compute')
   testAnswer(t, '3 + 4 * 2', 11, 'could compute')
+  testAnswer(t, '3 + 4 +2* 2+ 1 *5', 16, 'could compute')
+
+  t.end();
+});
+
+test('subtraction test', function (t) {
+
+  testAnswer(t, '5 - 2', 3, 'could subtract')
+  testAnswer(t, '5 - 4', 1, 'could subtract')
+  testAnswer(t, '4 - 5', -1, 'could subtract')
+
+  t.end();
+});
+
+test('subtraction and multiplication test', function (t) {
+
+  testAnswer(t, '5 - 1 * 2', 3, 'could subtract')
+  testAnswer(t, '2 * 5 - 4', 6, 'could subtract')
+  testAnswer(t, '4 - 5 * 2', -6, 'could subtract')
+
+  t.end();
+});
+
+test('brackets test', function (t) {
+  var result;
+
+  testAnswer(t, '(5)', 5, 'could compute')
+  testAnswer(t, '((5))', 5, 'could compute')
+  testAnswer(t, '(5 + 5)', 10, 'could compute')
+  testAnswer(t, '((5 + 5))', 10, 'could compute')
+  testAnswer(t, '(5 * 5)', 25, 'could compute')
+  testAnswer(t, '((10 * 10))', 100, 'could compute')
+  testAnswer(t, '(10 - 5)', 5, 'could compute')
+  testAnswer(t, '((20 - 5))', 15, 'could compute')
+  testAnswer(t, '(10 + 5 * 2)', 20, 'could compute')
+  testAnswer(t, '(10 + 2) * 2', 24, 'could compute')
+  testAnswer(t, '(5 - 10) * 2', -10, 'could compute')
+  testAnswer(t, '(6 - 3) + (5 + 7) * 2', 27, 'could compute')
+  testAnswer(t, '((6 - 3) - (5 + 7)) * 2', -18, 'could compute')
+  testAnswer(t, '((6 - 3) - ((5 + 7) * 2)) * 2', -42, 'could compute')
+  testAnswer(t, '5 + (5 + 5)', 15, 'could compute')
+  testAnswer(t, '5 + (5 * 5)', 30, 'could compute')
+
+  testAnswer(t, '(10 - 5', undefined, 'should throw');
+
+  t.end();
+});
+
+test('division test', function (t) {
+
+  testAnswer(t, '10 / 2', 5, 'could divide')
+  testAnswer(t, '10 / 10', 1, 'could divide')
+  testAnswer(t, '((0 - 1) * 10) / 2', -5, 'could divide')
+  testAnswer(t, '10 + -2', 8, 'could compute')
+
 
   t.end();
 });
